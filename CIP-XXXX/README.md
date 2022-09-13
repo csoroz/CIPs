@@ -14,22 +14,24 @@ License: CC-BY-4.0
 This CIP extends the Cardano ledger rules relating to governance with two
 features:
 
-1. Enabling the committee of "master key" holders to agree to replace themselves
-   with a new committee.
-2. Requiring protocol parameter updates that schedule a hard fork to be signed
-   by a threshold of the master key holders, rather than just a threshold of
-   their delegated governance keys.
+1. A new on-chain mechanism to enable the committee of "master key" holders to
+   agree to replace themselves with a new committee.
+2. A change to the existing on-chain rules to require protocol parameter updates
+   that schedule a hard fork to be signed by a threshold of the master key
+   holders and a threshold of their delegated governance keys -- whereas
+   previously only the threshold of delegated governance keys was required.
 
 # Motivation
 
-Recall that the simple centralised governance system that was introduced with
+Recall that the simple centralised governance system that was introduced
 in the Cardano Shelley era works like this:
 
-* There are 7 original "master keys", as specified in the original Byron genesis configuration.
+* There are 7 original "master keys", as specified in the original Byron genesis
+  configuration.
 * The original master keys are held by IOG, the Cardano Foundation and Emurgo.
 * These master keys delegate to 7 corresponding "governance keys".
 * The delegation from each master key to its corresponding governance key can be
-  on-chain updated at any time, using a delegation certificate signed by the
+  updated on-chain at any time, using a delegation certificate signed by the
   master key.
 * The governance keys are used to sign protocol parameter updates (including
   changes to the major protocol version, which schedules a hard fork) and
@@ -45,11 +47,12 @@ get proper agreement and consent to a "constitutional" change that introduces
 decentralised governance!
 
 To side-step this difficulty, the existing centralised governance could be
-minimally modified to hand governance to the Cardano Foundation, which can then
-through off-chain legal and community means establish agreement and consent for
-a final decentralised governance system, to be enacted via a later hard fork.
-Thus this CIP proposes two minimal changes that would allow the existing
-centralised governance to be transferred to a new committee, and used safely.
+minimally modified to hand governance to a new committee -- ideally with broad
+community support and legitimacy -- which can then through off-chain legal and
+community means establish agreement and consent for a final decentralised
+governance system, to be enacted via a later hard fork. Thus this CIP proposes
+two minimal changes that would allow the existing centralised governance to be
+transferred to a new committee, and used safely.
 
 The first change allows the committee holding master keys to vote on-chain to
 replace itself. This would require signatures from a minimum threshold of the
@@ -60,9 +63,26 @@ the committee. At the point when this feature is introduced at a hard fork, the
 initial committee would consist of the original 7 master keys, with the existing
 threshold of 5 signatures required.
 
-This feature is required because the existing centralised governance system does
-not have any way for the master keys to be replaced, only to change the
-delegated governance keys.
+This first feature is required because the existing centralised governance
+system does not have any way for the master keys to be replaced, only to change
+the delegated governance keys.
+
+The existing centralised governance involves a notion of delegation from each
+master key to a governance key. It would be useful to have the flexibility to
+use this delegation between keys to allow delegation between different
+individuals holding the keys, acting in different roles, and to do so while
+only requiring limited trust. For example, an individual or organisation holding
+a master key may have clear community support to act in a governance oversight
+role, but not themselves have the technical capability or the time to also act
+in the operational governance role. Another example might be that one
+organisation might hold many master keys and delegate to a set of governance
+keys held by other individuals. This provides a simple approximation of M:N
+delegation. There may be other useful examples. The point is simply that such
+flexibility would likely be useful, but it is important that such flexibility
+can be exercised safely. In the existing centralised governance system however,
+the delegation from master key to governance key implies full trust, because (a
+threshold of) the governance key holders can invoke hard forks which can change
+anything, including the governance system.
 
 The second feature prevents the holders of the delegated governance keys from
 "overthrowing" the holders of the master keys. This would otherwise be possible:
@@ -75,6 +95,11 @@ parameter updates that modify the major protocol version must additionally be
 signed by the same threshold of the master keys. This ensures that there is
 consent from the master key holders for all hard forks, which may include
 governance changes.
+
+This second feature is required to allow the holders of the master keys and the
+holders of the delegated governance keys to be different groups of individuals,
+without also allowing the holders of the delegated governance keys to act
+unilaterally to change any aspect of the system (including governance).
 
 # Specification
 
