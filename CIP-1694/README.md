@@ -41,6 +41,7 @@ to any other registered representative.  These voting rights will be based on Ad
 >
 > * Jack Briggs;
 > * Tim Harrison;
+> * Andre Knispel;
 > * Philip Lazos;
 > * Michael Madoff;
 > * Evangelos Markakis;
