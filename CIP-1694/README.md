@@ -72,7 +72,7 @@ Fields in the transaction body provide details of the action to be carried out: 
 
 Successful governance actions are applied on an epoch boundary (they are **enacted**).
 
-One of the protocol parameters is sufficiently significant to merit special attention: changing the major protocol version enables Cardano to enact controlled hard forks. This type of update, therefore, has a special status amongst the possible protocol parameter updates.
+One of the protocol parameters is sufficiently significant to merit special attention: changing the major protocol version enables Cardano to enact controlled hard forks. This type of update, therefore, has a special status among the possible protocol parameter updates.
 
 ### Shortcomings of the Shelley Governance Design
 
@@ -142,13 +142,13 @@ The Constitutional Committee can be replaced in one of two ways:
 
 #### Size of the Constitutional Committee
 
-Unlike the Shelley governance design, the size of the Constitutional Committee is not fixed.  It may be changed any time that a new committee is installed.  Likewise, the _quorum_ (the number of vptes that are required to enact governance actions) is not fixed and can be varied whenever a new committee is installed. This gives a great deal pf flexibility.
+Unlike the Shelley governance design, the size of the Constitutional Committee is not fixed.  It may be changed any time that a new committee is installed.  Likewise, the _quorum_ (the number of votes that are required to enact governance actions) is not fixed and can be varied whenever a new committee is installed. This gives a great deal pf flexibility.
 
 ### Governance Actions
 
 We define six different types of **governance actions**. A governance action is an on-chain event that is triggered by a transaction and has a deadline after which it cannot be enacted.
 
-An action is said to be **ratified** when it gathers enough votes in its favour (through rules and parameters detailed below). An action that doesn't collect sufficient `yes` votes before its deadline is said to have **expired**.
+An action is said to be **ratified** when it gathers enough votes in its favor (through rules and parameters detailed below). An action that doesn't collect sufficient `yes` votes before its deadline is said to have **expired**.
 An action that has been ratified is said to be **enacted** once it has been activated on the network.
 Regardless of whether they have been ratified, actions may, however, be **dropped** without being **enacted** if, for example, a motion of no confidence is enacted.
 
@@ -171,8 +171,8 @@ Note that a motion of no-confidence is an extreme measure that enables Ada holde
 Governance actions are **ratified** through on-chain voting actions.  Different kinds of governance actions have different ratification requirements: depending on the type of governance action, an action will become ratified if some specific combination of the following occurs:
 
 * the Constitutional Committee approves of the action (`Quorum-Many` members vote 'yes');
-* the DReps approve of the action (the stake controlled by the DReps who vote 'yes' meets a certain threshold over those who vote 'no');
-* the SPOs approve of the action (the stake controlled by the SPOs who vote 'yes' meets a certain threshold over those who vote 'no').
+* the DReps approve of the action (the stake controlled by the DReps who vote 'yes' meets a certain threshold over the total registered voting stake);
+* the SPOs approve of the action (the stake controlled by the SPOs who vote 'yes' meets a certain threshold over the total registered voting stake).
 
 > **Warning**
 > As explained below, different stake distributions apply to DReps and SPOs.
@@ -192,23 +192,31 @@ The following table details the ratification requirements for each governance ac
   The DRep vote threshold that must be met as a percentage of *active voting stake*, ranging from 0 to 100 (inclusive).
 
 * **AVST**<br/>
-  The _**A**ctive **V**oting **S**take **T**hreshold_. The percentage to be used to determine if there is *sufficient active voting stake*. SPO vote endorsement is not required for the specific governance action if there is a sufficient active voting stake.
-  Otherwise, SPO vote endorsement is required. The :x: symbol indicates that the AVST will be ignored, and only the DRep and SPO votes will be considered regardless of the AVST.
+  The _**A**ctive **V**oting **S**take **T**hreshold_. The percentage to be used to determine if there is *sufficient active voting stake*.
+
+* **AVST action**<br/>
+  The consequence of the voting stake being below the AVST.
+  * **Required**<br/>
+    This governance action cannot be ratified without achieving the AVST threshold.
+  * **SPO**<br/>
+    For this governance action, SPO vote endorsement is not required if there is a sufficient active voting stake.
+    Otherwise, SPO vote endorsement is required.
+
 
 * **SPOs**<br/>
   The SPO vote threshold which must be met as a percentage of the stake held by all stake pools. The SPO vote is only considered if the AVST threshold is :x: or the AVST is below the AVST threshold.
 
-| Governance Action Type                               | Constitutional Committee | DReps    | AVST     | SPOs     |
-| ---                                                  | :---:                    | ---      | ---      | ---      |
-| 1. Motion of no-confidence                           | :x:                      | $P_1$    | :x:      | $R_1$    |
-| 2(a). New Committee/quorum (_normal state_)          | :heavy_check_mark:       | $P_{2a}$ | $Q_{2a}$ | $R_{2a}$ |
-| 2(b). New Committee/quorum (_state of no-confidence_)| :x:                      | $P_{2b}$ | :x:      | $R_{2b}$ |
-| 3. Update to the Constitution                        | :heavy_check_mark:       | $P_3$    | $Q_3$    | $R_3$    |
-| 4. Hard-Fork initiation                              | :heavy_check_mark:       | $P_4$    | :x:      | $R_4$    |
-| 5. Protocol parameter changes                        | :heavy_check_mark:       | $P_5$    | $Q_5$    | $R_5$    |
-| 6(a). Treasury withdrawal, $[T_0, T_1)$              | :heavy_check_mark:       | $P_{6a}$ | $Q_{6a}$ | $R_{6a}$ |
-| 6(b). Treasury withdrawal, $[T_1, T_2)$              | :heavy_check_mark:       | $P_{6b}$ | $Q_{6b}$ | $R_{6b}$ |
-| 6(c). Treasury withdrawal, $[T_2, T_3)$              | :heavy_check_mark:       | $P_{6c}$ | $Q_{6c}$ | $R_{6c}$ |
+| Governance Action Type                               | Constitutional Committee | DReps    | AVST     | AVST Action | SPOs     |
+| ---                                                  | :---:                    | ---      | ---      | ---         | ---      |
+| 1. Motion of no-confidence                           | :x:                      | $P_1$    | $Q_1$    | Required    | $R_1$    |
+| 2(a). New Committee/quorum (_normal state_)          | :heavy_check_mark:       | $P_{2a}$ | $Q_{2a}$ | SPO         | $R_{2a}$ |
+| 2(b). New Committee/quorum (_state of no-confidence_)| :x:                      | $P_{2b}$ | $Q_{2b}$ | Required    | $R_{2b}$ |
+| 3. Update to the Constitution                        | :heavy_check_mark:       | $P_3$    | $Q_3$    | SPO         | $R_3$    |
+| 4. Hard-Fork initiation                              | :heavy_check_mark:       | $P_4$    | 0        | -           | $R_4$    |
+| 5. Protocol parameter changes                        | :heavy_check_mark:       | $P_5$    | $Q_5$    | SPO         | $R_5$    |
+| 6(a). Treasury withdrawal, $[T_0, T_1)$              | :heavy_check_mark:       | $P_{6a}$ | $Q_{6a}$ | SPO         | $R_{6a}$ |
+| 6(b). Treasury withdrawal, $[T_1, T_2)$              | :heavy_check_mark:       | $P_{6b}$ | $Q_{6b}$ | SPO         | $R_{6b}$ |
+| 6(c). Treasury withdrawal, $[T_2, T_3)$              | :heavy_check_mark:       | $P_{6c}$ | $Q_{6c}$ | SPO         | $R_{6c}$ |
 
 Some of the parameters given in this table ( $P_1$ ... $R_{6c}$, $T_1$ ... $T_3$ ) may be updatable protocol parameters, but others should be hard-coded. This proposal deliberately leaves both this choice and the choice of actual parameter values open for discussion.
 
@@ -293,6 +301,10 @@ Each vote transaction consists of the following:
 * a yes/no/abstain vote.
 
 Note that "abstained" votes are not included in the "active voting stake".
+Note also that a vote to abstain is different than abstaining from voting
+(the former is visible on chain, the latter is not).
+To avoid confusion, we will only use the word "abstain" from this point onward to mean a vote
+to abstain.
 
 The key hash will trigger the appropriate signature check on the transaction body according to the existing `UTxOW` ledger rule.
 
@@ -350,7 +362,7 @@ The authorization scheme (i.e. which signatures are required) mimics the existin
 
 In addition to the existing per-stake-credential distribution and the per-stake-pool distribution, we will now have a new per-DRep stake distribution.
 
-This distribution will determine how much stake is backed by each `yes` (or `no`) vote from a DRep. The exact stake snapshot used for block production by the SPOs will also be used for the DReps for voting.
+This distribution will determine how much stake is backed by each `yes` vote from a DRep. The exact stake snapshot used for block production by the SPOs will also be used for the DReps for voting.
 
 #### Definitions surrounding Voting Stake
 
@@ -420,21 +432,127 @@ However, this choice also limits the implementation effort for wallet providers 
 
 In contrast to other protocol parameter updates, hard forks (or, currently, changes to the protocol's major version) require much more attention.
 Indeed, while other protocol parameter changes can be performed without significant software changes,
-a hard fork assumes that a supermajority of the network has upgraded the node to support the new set of features that are introduced by the upgrade. This means that the timing of a hard fork event must be communicated well ahead of time to all Cardano users, and requires coordination between stake pool operators, wallet providers, DApp developers, and the node release team.
+a hard fork assumes that a super majority of the network has upgraded the node to support the new set of features that are introduced by the upgrade. This means that the timing of a hard fork event must be communicated well ahead of time to all Cardano users, and requires coordination between stake pool operators, wallet providers, DApp developers, and the node release team.
 
 Hence, this proposal promotes hard fork initiations as a standalone governance action, separate from protocol parameter updates, as in the Shelley scheme.
 
 ### Treasury Withdrawals vs Project Catalyst
 
-Project Catalyst is currently one of the main drivers for withdrawals from the Cardano treasury. Each Catalyst round is usually followed by hundreds - if not thousands - of MIR requests to deliver funding to selected projects. In this new governance framework, however, we will only permit one trasury withdrawal per epoch.
+Project Catalyst is currently one of the main drivers for withdrawals from the Cardano treasury. Each Catalyst round is usually followed by hundreds - if not thousands - of MIR requests to deliver funding to selected projects. In this new governance framework, however, we will only permit one treasury withdrawal per epoch.
 
 Since all withdrawal requests from the treasury must fit into a single transaction, this limits the number of projects that can be funded in a single epoch. If necessary, this can be worked around by e.g. splitting funding over multiple epochs, by transferring funds to a temporary holding pot, or by restricting the number of projects that are funded in each round.
+
+### The purpose of the DReps
+
+Nothing in this proposal limits the SPOs from becoming DReps.
+Why do we have DReps at all?
+SPOs are chosen purely for block production.
+Voters can choose to delegate their vote to DReps without needing to consider whether they are
+also a good block producer.
+
+### AVST (action voting stake threshold)
+
+The AVST exists to ensure that the votes of the DReps are meaningful.
+For example, if only 10 Lovelace were properly delegated to DReps, and 9 Lovelace "vote yes" to
+a governance action, we would doubt the legitimacy of the result since there are
+billions of ADA in circulation.
+A high enough AVST legitimizes the representation.
+
+### Ratification Requirements Table
+
+The requirements in the [ratification requirement table](#requirements) are explained here.
+Most of the governance actions have the same kind of requirements:
+the constitutional committee must reach quorum and the DReps must reach a sufficient number of
+'yes' votes, except in the situation where the AVST is too low, in which case the SPOs vote in
+place of the DReps.
+This includes these actions:
+* New Committee/quorum (normal state)
+* Update to the Constitution
+* Protocol parameter changes
+* Treasury withdrawal
+
+#### Motion of no-confidence
+
+A motion of no-confidence represents the lack of confidence by the Cardano community in the
+current Constitutional Committee, and hence the Constitutional Committee should have no
+say whatsoever in this governance action.
+In this situation, the SPOs and the DReps are left to represent the will of the community.
+To prevent an under-representation of the DReps, the AVST (active voting stake threshold)
+becomes a requirement for ratification.
+
+#### New Committee/quorum (state of no-confidence)
+
+Similar to the motion of no-confidence, electing a constitutional committee
+depends on both the SPOs and the DReps to represent the will of the community.
+To prevent an under-representation of the DReps, the AVST (active voting stake threshold)
+becomes a requirement for ratification.
+
+#### Hard-Fork initiation
+
+Regardless of any governance mechanism, SPO participation is needed for any hard fork since it is
+they who must upgrade their software.
+For this reason, we make their cooperation explicit in the hard fork initiation governance action,
+by always requiring their vote.
+The Constitutional Committee also votes, signaling the constitutionality of a hard fork.
+The DReps also vote, to represent the will of every stake holder, though the AVST is not required.
+Requiring the AVST in this situation could block a critical upgrade,
+though we may wish to reconsider this in the future.
+
+### New Metadata structures
+
+Both the governance actions and the votes use new metadata fields,
+in the form of URLs and integrity hashes
+(mirroring the metadata structure for stake pool registration).
+The metadata is used to provide context.
+For example, votes by the constitutional committee need an explanation as to why it is in line with
+the constitution.
+Governance actions need to explain why the action is needed,
+what experts were consulted, etc.
+We do not want transaction size constraints to limit this explanatory data,
+so we use metadata.
+
+This does, however, introduce new problems.
+If a URL does not resolve, what should be the expectation for voting on that action?
+Should we expect everyone to vote 'abstain'?.
+Is this an attack vector against the governance system?
+In such a scenario, the hash pre-image could be communicated in other ways, but we should be
+prepared for the situation.
+Should there be a summary of the justification on chain?
+
+Alternatively, instead of introducing new metadata fields, we could instead impose new formats
+on the existing transaction metadata.
+Note that currently there is no substantial validation of the metadata,
+definitely not anything aware of the contents of the transaction body.
+Coupling the metadata with the actions/votes enforces the expectation of the existence of the
+metadata (even if empty) without validating the transaction metadata based on the transaction body.
+
+### Three levels of treasury withdrawals
+
+Three different treasury withdrawal governance actions were introduced so that higher
+withdrawals could have higher ratification thresholds.
+It should be more difficult to ratify withdrawals for larger amounts.
+
+Alternatively, we could introduce a single action for all treasury withdrawals,
+and specify an increasing function from ADA to the thresholds.
+
+Additionally, since the treasury allocation for each epoch is given in terms of a percentage of the
+reward pot, we should also consider treasury allotment when computing the
+thresholds.
+
+// TODO Specify a function which takes the treasury allotment and the treasury withdrawal amount
+and returns the AVST, the DRep voting threshold, and the SPO voting threshold.
 
 ## Path to Active
 
 ### Acceptance Criteria
 
 - [ ] A new ledger era is enabled on the Cardano mainnet, which implements the above specification. This will be split into two stages, as described above.
+
+#### Other potential acceptance criterion
+
+- [ ] Exercising all the governance actions on a public testnet, with sufficient participation.
+- [ ] Having the constitution text approved by some process.
+- [ ] Having the initial constitutional committee approved by some process.
 
 ### Implementation Plan
 
@@ -460,6 +578,8 @@ New protocol parameters will be needed for the following:
 As described above, some  of these will be updatable; others will be hard coded.
 
 // TODO: Decide on the initial parameter values and whether they should be updatable.
+
+// TODO: Decide on coherence conditions on the voting thresholds. For example, the threshold for a motion of no-confidence should arguably be higher than that of a minor treasury withdrawal.
 
 In addition, the initial Constitutional Committee and the initial Constitution will need to be defined as part of a bootstrap process.
 
@@ -499,6 +619,6 @@ This CIP is licensed under [CC-BY-4.0](https://creativecommons.org/licenses/by/4
     > The capabilities of the `MIR` transition rule were expanded in the [Alonzo ledger specification](https://hydra.iohk.io/job/Cardano/cardano-ledger/specs.alonzo-ledger/latest/download-by-type/doc-pdf/alonzo-changes)
 
 
-[^2]: There are many varying definitions of the term "hard fork" in the crypto industry. Hard forks typically refer to non-backwards compatible updates of a network. In Cardano, we formalize the definition slightly more by calling any upgrade that would lead to _more blocks_ being validated a "hard fork" and force nodes to comply with the new protocol version, effectively obsoleting nodes that are unable to handle the upgrade.
+[^2]: There are many varying definitions of the term "hard fork" in the blockchain industry. Hard forks typically refer to non-backwards compatible updates of a network. In Cardano, we formalize the definition slightly more by calling any upgrade that would lead to _more blocks_ being validated a "hard fork" and force nodes to comply with the new protocol version, effectively obsoleting nodes that are unable to handle the upgrade.
 
 [^3]: This is the definition used in "active stake" for stake delegation to stake pools, see Section 17.1, Total stake calculation, of the [Shelley ledger specification](https://hydra.iohk.io/job/Cardano/cardano-ledger/shelleyLedgerSpec/latest/download-by-type/doc-pdf/ledger-spec).
