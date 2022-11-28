@@ -142,7 +142,7 @@ The Constitutional Committee can be replaced in one of two ways:
 
 #### Size of the Constitutional Committee
 
-Unlike the Shelley governance design, the size of the Constitutional Committee is not fixed.  It may be changed any time that a new committee is installed.  Likewise, the _quorum_ (the number of votes that are required to enact governance actions) is not fixed and can be varied whenever a new committee is installed. This gives a great deal pf flexibility.
+Unlike the Shelley governance design, the size of the Constitutional Committee is not fixed.  It may be changed any time that a new committee is installed.  Likewise, the _quorum_ (the number of votes that are required to enact governance actions) is not fixed and can be varied whenever a new committee is installed. This gives a great deal of flexibility.
 
 ### Governance Actions
 
@@ -171,7 +171,7 @@ Note that a motion of no-confidence is an extreme measure that enables Ada holde
 Governance actions are **ratified** through on-chain voting actions.  Different kinds of governance actions have different ratification requirements: depending on the type of governance action, an action will become ratified if some specific combination of the following occurs:
 
 * the Constitutional Committee approves of the action (`Quorum-Many` members vote 'yes');
-* the DReps approve of the action (the stake controlled by the DReps who vote 'yes' meets a certain threshold over the total registered voting stake);
+* the DReps approve of the action (the stake controlled by the DReps who vote 'yes' meets a certain threshold of the total registered voting stake);
 * the SPOs approve of the action (the stake controlled by the SPOs who vote 'yes' meets a certain threshold over the total registered voting stake).
 
 > **Warning**
