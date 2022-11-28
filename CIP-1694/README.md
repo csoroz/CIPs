@@ -194,29 +194,26 @@ The following table details the ratification requirements for each governance ac
 * **AVST**<br/>
   The _**A**ctive **V**oting **S**take **T**hreshold_. The percentage to be used to determine if there is *sufficient active voting stake*.
 
-* **AVST action**<br/>
-  The consequence of the voting stake being below the AVST.
-  * **Required**<br/>
-    This governance action cannot be ratified without achieving the AVST threshold.
-  * **SPO**<br/>
-    For this governance action, SPO vote endorsement is not required if there is a sufficient active voting stake.
-    Otherwise, SPO vote endorsement is required.
+* **AVST fallback**<br/>
+  The fallback condition if the AVST threshold is not met
+  * **None**: there is no fallback, the action cannot be ratified unless the AVST threshold is met
+  * **SPO vote**: the action can be ratified if there is a sufficient SPO vote endorsement.
 
 
 * **SPOs**<br/>
   The SPO vote threshold which must be met as a percentage of the stake held by all stake pools. The SPO vote is only considered if the AVST threshold is :x: or the AVST is below the AVST threshold.
 
-| Governance Action Type                               | Constitutional Committee | DReps    | AVST     | AVST Action | SPOs     |
-| ---                                                  | :---:                    | ---      | ---      | ---         | ---      |
-| 1. Motion of no-confidence                           | :x:                      | $P_1$    | $Q_1$    | Required    | $R_1$    |
-| 2(a). New Committee/quorum (_normal state_)          | :heavy_check_mark:       | $P_{2a}$ | $Q_{2a}$ | SPO         | $R_{2a}$ |
-| 2(b). New Committee/quorum (_state of no-confidence_)| :x:                      | $P_{2b}$ | $Q_{2b}$ | Required    | $R_{2b}$ |
-| 3. Update to the Constitution                        | :heavy_check_mark:       | $P_3$    | $Q_3$    | SPO         | $R_3$    |
-| 4. Hard-Fork initiation                              | :heavy_check_mark:       | $P_4$    | 0        | -           | $R_4$    |
-| 5. Protocol parameter changes                        | :heavy_check_mark:       | $P_5$    | $Q_5$    | SPO         | $R_5$    |
-| 6(a). Treasury withdrawal, $[T_0, T_1)$              | :heavy_check_mark:       | $P_{6a}$ | $Q_{6a}$ | SPO         | $R_{6a}$ |
-| 6(b). Treasury withdrawal, $[T_1, T_2)$              | :heavy_check_mark:       | $P_{6b}$ | $Q_{6b}$ | SPO         | $R_{6b}$ |
-| 6(c). Treasury withdrawal, $[T_2, T_3)$              | :heavy_check_mark:       | $P_{6c}$ | $Q_{6c}$ | SPO         | $R_{6c}$ |
+| Governance Action Type                               | Constitutional Committee | DReps    | AVST     | AVST Fallback | SPOs     |
+| ---                                                  | :---:                    | ---      | ---      | ---           | ---      |
+| 1. Motion of no-confidence                           | :x:                      | $P_1$    | $Q_1$    | None          | $R_1$    |
+| 2(a). New Committee/quorum (_normal state_)          | :heavy_check_mark:       | $P_{2a}$ | $Q_{2a}$ | SPO Vote      | $R_{2a}$ |
+| 2(b). New Committee/quorum (_state of no-confidence_)| :x:                      | $P_{2b}$ | $Q_{2b}$ | None          | $R_{2b}$ |
+| 3. Update to the Constitution                        | :heavy_check_mark:       | $P_3$    | $Q_3$    | SPO Vote      | $R_3$    |
+| 4. Hard-Fork initiation                              | :heavy_check_mark:       | $P_4$    | 0        | -             | $R_4$    |
+| 5. Protocol parameter changes                        | :heavy_check_mark:       | $P_5$    | $Q_5$    | SPO Vote      | $R_5$    |
+| 6(a). Treasury withdrawal, $[T_0, T_1)$              | :heavy_check_mark:       | $P_{6a}$ | $Q_{6a}$ | SPO Vote      | $R_{6a}$ |
+| 6(b). Treasury withdrawal, $[T_1, T_2)$              | :heavy_check_mark:       | $P_{6b}$ | $Q_{6b}$ | SPO Vote      | $R_{6b}$ |
+| 6(c). Treasury withdrawal, $[T_2, T_3)$              | :heavy_check_mark:       | $P_{6c}$ | $Q_{6c}$ | SPO Vote      | $R_{6c}$ |
 
 Some of the parameters given in this table ( $P_1$ ... $R_{6c}$, $T_1$ ... $T_3$ ) may be updatable protocol parameters, but others should be hard-coded. This proposal deliberately leaves both this choice and the choice of actual parameter values open for discussion.
 
@@ -391,6 +388,8 @@ At first, the Constitutional Committee may sound like a special committee that's
 Thus, the Constitutional Committee comes into play to make sure that the system can transition from its current state into fully decentralized governance in due course. Furthermore, in the long run, the committee can play a mentoring and advisory role in the governance decisions by being a set of elected representatives who are put under the spotlight for their judgment and guidance in governance decisions.
 Above all, the committee is required at all times to adhere to the Constitution and to ratify proposals in accordance with the provisions of the Constitution.
 
+// TODO Should we force a re-election of the initial committee? Should every committee have a term limit?
+
 ### Intentional Omission of Identity Validation
 
 Note that this CIP does not mention any kind of identity validation or verification for the members of the Constitutional Committee or the DReps.
@@ -480,12 +479,18 @@ In this situation, the SPOs and the DReps are left to represent the will of the 
 To prevent an under-representation of the DReps, the AVST (active voting stake threshold)
 becomes a requirement for ratification.
 
+// TODO We need to fully understand the trade-offs between using the DReps votes with and without
+the AVST.
+
 #### New Committee/quorum (state of no-confidence)
 
 Similar to the motion of no-confidence, electing a constitutional committee
 depends on both the SPOs and the DReps to represent the will of the community.
 To prevent an under-representation of the DReps, the AVST (active voting stake threshold)
 becomes a requirement for ratification.
+
+// TODO We need to fully understand the trade-offs between using the DReps votes with and without
+the AVST.
 
 #### Hard-Fork initiation
 
@@ -498,6 +503,9 @@ The DReps also vote, to represent the will of every stake holder, though the AVS
 Requiring the AVST in this situation could block a critical upgrade,
 though we may wish to reconsider this in the future.
 
+// TODO We need to fully understand the trade-offs between using the DReps votes with and without
+the AVST.
+
 ### New Metadata structures
 
 Both the governance actions and the votes use new metadata fields,
@@ -509,7 +517,7 @@ the constitution.
 Governance actions need to explain why the action is needed,
 what experts were consulted, etc.
 We do not want transaction size constraints to limit this explanatory data,
-so we use metadata.
+so we use URLs.
 
 This does, however, introduce new problems.
 If a URL does not resolve, what should be the expectation for voting on that action?
@@ -519,12 +527,20 @@ In such a scenario, the hash pre-image could be communicated in other ways, but 
 prepared for the situation.
 Should there be a summary of the justification on chain?
 
-Alternatively, instead of introducing new metadata fields, we could instead impose new formats
-on the existing transaction metadata.
-Note that currently there is no substantial validation of the metadata,
-definitely not anything aware of the contents of the transaction body.
-Coupling the metadata with the actions/votes enforces the expectation of the existence of the
-metadata (even if empty) without validating the transaction metadata based on the transaction body.
+##### Alternative: Use of transaction metadata
+
+Instead of specific dedicated fields in the transaction format, we could instead use the existing transaction metadata field.
+
+Governance-related metadata can be clearly identified by registering a CIP-10 metadata label.
+Within that, the structure of the metadata can be determined by this CIP (exact format TBD), using an index to map the vote or proposal id to the corresponding metadata URL and hash.
+
+This avoids the need to add additional fields to the transaction body, at the risk of making it easier for submitters to ignore.
+However, since the required metadata can be empty (or point to a non-resolving URL), it is already easy for submitters to not provide metadata, and so it is unclear whether this makes the situation worse.
+
+Note that transaction metadata is never stored in the ledger state, so it would be up to clients
+to pair the metadata with the actions and votes in this alternative, and would not be available
+as a ledger state query.
+
 
 ### Three levels of treasury withdrawals
 
