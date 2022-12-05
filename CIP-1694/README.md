@@ -379,6 +379,46 @@ We define some notions around voting stake:
 >  3. The total ADA supply (i.e. 45 billion ADA) minus the reserves[^3].
 >  We leave the choice open for discussion.
 
+#### New Protocol Parameters
+
+New protocol parameters will be needed for the following:
+
+* the governance action deposit amount
+* governance action expiration (as a number of epochs from the current epoch)
+* thresholds for treasury withdrawals
+* each of the ratification thresholds
+
+As described above, some  of these will be updatable; others will be hard coded.
+
+// TODO: Decide on the initial parameter values and whether they should be updatable.
+
+// TODO: Decide on coherence conditions on the voting thresholds. For example, the threshold for a motion of no-confidence should arguably be higher than that of a minor treasury withdrawal.
+
+In addition, the initial Constitutional Committee and the initial Constitution will need to be defined as part of a bootstrap process.
+
+#### Changes to the existing ledger rules
+
+* The `PPUP` transition rule will be rewritten and moved out of the `UTxO` rule and into the `LEDGER` rule as a new `TALLY` rule.
+
+  It will process the governance actions and the votes, ratify them, and stage governance actions for enactment in the current or next epoch, as appropriate.
+
+* The `NEWEPOCH` transition rule will be modified.
+* The `MIR` sub-rule will be removed.
+* A new `ENACTMENT` rule will be called immediately after the `EPOCH` rule. This rule will enact governance actions that have previously been ratified.
+* The `EPOCH` rule will no longer call the `NEWPP` sub-rule or compute whether the quorum is met on the PPUP state.
+
+#### More on DRep incentives
+
+The DReps arguably need to be compensated for their work.
+
+The corresponding incentive mechanisms need to be specified, with the funds probably coming from the per-epoch treasury allocation.
+Performance constraints will also need to be considered since it would be problematic if millions of DReps were expected to vote on each governance action. Some incentive options to ensure a manageable number of DReps include:
+
+* Requiring a large deposit when registering oneself as a DRep.
+* An incentive scheme similar to the stake pool reward scheme is used to limit individual rewards. (Note that this is probably not enough on its own, as many voters may wish to be their own DRep regardless of payment).
+* Some form of a per-epoch randomized sub-committee of DReps which takes stake weight into account.
+
+
 ## Rationale
 
 ### Role of the Constitutional Committee
@@ -398,26 +438,6 @@ This is intentional.
 
 We hope that the community will strongly consider only voting for and delegating to those who provide something like a DID to make themselves known.
 However, enforcing identity verification is very difficult without some centralized oracle, which we consider to be a step in the wrong direction.
-
-### Initial Implementation Stage
-
-This document describes an ambitious change to Cardano governance. A two-stage implementation process will
-allow it to be rolled out more quickly, with some of the more complicated aspects
-(DReps and constitutional changes) rolled out in a second stage. This will also allow time
-for fuller evaluation of/consultation on incentives and other significant  issues, while establishing the basis for
-governance in Voltaire.
-Below is a high-level summary of an implementation plan for (very roughly) half of the plan.
-
-1. Add a subset of (important) governance actions to the transaction body (while deprecating protocol parameter updates and MIR certificates).
-  The following governance actions will be supported initially:
-  * protocol parameters
-  * hard forks
-  * withdrawals from the treasury
-  * Constitutional Committee changes
-2. Add votes to the transaction body, but disallow DRep votes.
-3. The first version of the new `RATIFY` rule will only count Constitutional Committee votes, plus SPO votes for hard forks (similarly to the previously defined, and now obsoleted, `CIP-47`).
-
-The remainder of this proposal will be implemented in the second stage.
 
 ### Piggybacking on stake pool stake distribution
 
@@ -552,11 +572,41 @@ Alternatively, we could introduce a single action for all treasury withdrawals,
 and specify an increasing function from ADA to the thresholds.
 
 Additionally, since the treasury allocation for each epoch is given in terms of a percentage of the
-reward pot, we should also consider treasury allotment when computing the
-thresholds.
+reward pot, we should also consider treasury allotment (the protocol parameter $\tau$)
+when computing the thresholds.
+For example, the treasury withdrawals for a given epoch could be limited roughly equal to the
+amount of lovelace moved to the treasury from the reserve pot that epoch.
 
 // TODO Specify a function which takes the treasury allotment and the treasury withdrawal amount
 and returns the AVST, the DRep voting threshold, and the SPO voting threshold.
+
+### Out of scope
+
+The follow topics are considered out of scope for this proposal.
+
+#### The contents of the constitution
+
+The contents of the initial constitution are extremely important, as are any processes around amending it.
+This is, however, separate enough from the on-chain protocol proposed in this CIP
+to merit a separate and focused discussion.
+
+#### Legal issues
+
+Any potential legal enforcement of either the Cardano protocol or the Cardano constitution are
+completely out of scope for this CIP.
+
+#### Off chain standards for creating governance actions
+
+The Cardano community should think deeply about standards and processes for handling the creation
+of the governance actions specified in this CIP.
+These standards, however, are outside the scope of this CIP.
+In particular, the role of Project Catalyst in creating treasury withdrawal actions is outside the
+scope of this CIP, except in cases where clarifying the distinction is helpful.
+
+#### Private entities
+
+How any private companies or individuals choose to delegate their ADA, either to stake pools
+or to DReps, is outside the scope of this CIP (and arguably to the CIP process in general).
 
 ## Path to Active
 
@@ -572,54 +622,28 @@ and returns the AVST, the DRep voting threshold, and the SPO voting threshold.
 
 ### Implementation Plan
 
-This proposal restricts itself to the core on-chain mechanism. However, several issues remain to be discussed. These include:
+The features in this CIP require a hard fork.
 
-1. off-chain DRep expectations;
-2. bootstrapping the Constitutional Committee;
-3. the initial Constitution;
-4. DRep incentives;
-5. which values in the [ratification requirement table](#requirements) should be hard-coded, and which should be protocol parameters?
+This document describes an ambitious change to Cardano governance.
+A two-stage implementation process will allow it to be rolled out more quickly, with some of the more complicated aspects
+(DReps and constitutional changes) rolled out in a second stage.
+In particular, the changes will be implemented with two hard forks.
+This will also allow time
+for fuller evaluation of/consultation on incentives and other significant issues,
+while establishing the basis for governance in Voltaire.
+Below is a high-level summary of an implementation plan for (very roughly) half of the plan.
 
-Some of these issues may be addressed by changes to this document; others will need to be addressed in new CIPs or discussion documents.
+1. Add a subset of (important) governance actions to the transaction body (while deprecating protocol parameter updates and MIR certificates).
+  The following governance actions will be supported initially:
+  * protocol parameters
+  * hard forks
+  * withdrawals from the treasury
+  * Constitutional Committee changes
+2. Add votes to the transaction body, but disallow DRep votes.
+3. The first version of the new `RATIFY` rule will only count Constitutional Committee votes, plus SPO votes for hard forks (similarly to the previously defined, and now obsoleted, `CIP-47`).
 
-#### New Protocol Parameters
+The remainder of this proposal will be implemented in the second stage.
 
-New protocol parameters will be needed for the following:
-
-* the governance action deposit amount
-* governance action expiration (as a number of epochs from the current epoch)
-* thresholds for treasury withdrawals
-* each of the ratification thresholds
-
-As described above, some  of these will be updatable; others will be hard coded.
-
-// TODO: Decide on the initial parameter values and whether they should be updatable.
-
-// TODO: Decide on coherence conditions on the voting thresholds. For example, the threshold for a motion of no-confidence should arguably be higher than that of a minor treasury withdrawal.
-
-In addition, the initial Constitutional Committee and the initial Constitution will need to be defined as part of a bootstrap process.
-
-#### Changes to the existing ledger rules
-
-* The `PPUP` transition rule will be rewritten and moved out of the `UTxO` rule and into the `LEDGER` rule as a new `TALLY` rule.
-
-  It will process the governance actions and the votes, ratify them, and stage governance actions for enactment in the current or next epoch, as appropriate.
-
-* The `NEWEPOCH` transition rule will be modified.
-* The `MIR` sub-rule will be removed.
-* A new `ENACTMENT` rule will be called immediately after the `EPOCH` rule. This rule will enact governance actions that have previously been ratified.
-* The `EPOCH` rule will no longer call the `NEWPP` sub-rule or compute whether the quorum is met on the PPUP state.
-
-#### More on DRep incentives
-
-The DReps arguably need to be compensated for their work.
-
-The corresponding incentive mechanisms need to be specified, with the funds probably coming from the per-epoch treasury allocation.
-Performance constraints will also need to be considered since it would be problematic if millions of DReps were expected to vote on each governance action. Some incentive options to ensure a manageable number of DReps include:
-
-* Requiring a large deposit when registering oneself as a DRep.
-* An incentive scheme similar to the stake pool reward scheme is used to limit individual rewards. (Note that this is probably not enough on its own, as many voters may wish to be their own DRep regardless of payment).
-* Some form of a per-epoch randomized sub-committee of DReps which takes stake weight into account.
 
 ## Copyright
 
