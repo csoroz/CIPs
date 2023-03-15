@@ -31,27 +31,27 @@ License: CC-BY-4.0
 
 We propose a revision of Cardano's on-chain governance system to support the new requirements for Voltaire.
 The existing specialized governance support for protocol parameter updates and MIR certificates will be removed,
-and two new fields will be added to normal transaction bodies:
+and two new fields will be added to normal transaction bodies for:
 
 1. governance actions
 2. votes
 
 **Any Cardano user** will be allowed to submit a **governance action**.
-We introduce also three distinct governance bodies with different functions in the governance framework:
+We also introduce three distinct governance bodies that have specific functions in this new governance framework:
 
 1. a constitutional committee
 2. a group of delegate representatives (henceforth called **DReps**)
 3. the stake pool operators (henceforth called **SPOs**)
 
-Every governance action must be ratified by two of these three governance bodies using their **votes**.
+Every governance action must be ratified by two of these three governance bodies using their on-chain **votes**.
 The type of action and the state of the governance system determines which bodies must ratify it.
 
 Ratified actions may then be **enacted** on-chain, following a set of well-defined rules.
 
 As with stake pools, any Ada holder may register to be a DRep and so choose to
-represent themselves and/or others.  Also, as with stake pools, they may, instead, delegate their voting
+represent themselves and/or others.  Also, as with stake pools, Ada holders may, instead, delegate their voting
 rights to any other registered DRep.
-These voting rights will be based on their total Ada holdings, as a whole number of Lovelace.
+Voting rights will be based on the total Ada that is delegated, as a whole number of Lovelace.
 
 The most crucial aspect of this proposal is therefore the notion of **"one Lovelace = one vote"**.
 
@@ -77,7 +77,7 @@ We would also like to thank those who have commented via Github and other channe
 <details>
   <summary><strong>2023 Colorado Workshop (28/02 → 01/03)</strong></summary>
 
-In addition, we would like to thank all the attendees of the workshop that was held on February 28th and March 1st 2023 for their valuable contributions
+In addition, we would like to thank all the attendees of the workshop that was held in Longmont, Colorado on February 28th and March 1st 2023 for their valuable contributions
 to this CIP, and for their active championing of Cardano's vision for minimal viable governance.  These include:
 
 * Adam Rusch, ADAO & Summon
@@ -117,7 +117,7 @@ to this CIP, and for their active championing of Cardano's vision for minimal vi
 
 We're heading into the age of Voltaire, laying down the foundations for decentralized decision-making.
 This CIP describes a mechanism for on-chain governance that will underpin the Voltaire phase of Cardano.
-This document builds on and extends the original Cardano governance scheme that was based on a fixed number of governance keys.
+The CIP builds on and extends the original Cardano governance scheme that was based on a fixed number of governance keys.
 It aims to provide a **first step** that is both valuable and, importantly, is also technically achievable
 in the **near term** as part of the proposed Voltaire governance system.
 
@@ -136,8 +136,8 @@ The on-chain Cardano governance mechanism that was introduced in the Shelley led
 In the current scheme, governance actions are initiated by special transactions that require `Quorum-Many` authorizations
 from the governance keys (5 out of 7 on the Cardano mainnet)[^1].
 Fields in the transaction body provide details of the proposed governance action:
-either changing protocol parameter changes or initiating funds transfers.
-Each transaction can trigger precisely one kind of governance action, but a single action can have more than one effect (e.g. changing two or more protocol parameters).
+either i) changing protocol parameter changes; or ii) initiating funds transfers.
+Each transaction can trigger precisely one kind of governance action. However, a single action can have more than one effect (e.g. changing two or more protocol parameters).
 
 - Protocol parameter updates use [transaction field nº6](https://github.com/input-output-hk/cardano-ledger/blob/8884d921c8c3c6e216a659fca46caf729282058b/eras/babbage/test-suite/cddl-files/babbage.cddl#L56) of the transaction body.
 - Movements of the treasury and the reserves use [Move Instantaneous Rewards (abbrev. MIR) certificates](https://github.com/input-output-hk/cardano-ledger/blob/8884d921c8c3c6e216a659fca46caf729282058b/eras/babbage/test-suite/cddl-files/babbage.cddl#L180).
@@ -149,17 +149,17 @@ Properly authorized governance actions are applied on an epoch boundary (they ar
 One of the protocol parameters is sufficiently significant to merit special attention:
 changing the major protocol version enables Cardano to enact controlled hard forks.
 This type of protocol paramater update therefore has a special status, since stake pools
-must upgrade their node versions to support the new protocol version once the hard fork is enacted.
+must upgrade their nodes so they can support the new protocol version once the hard fork is enacted.
 
 ### Shortcomings of the Shelley governance design
 
-The current design was intended to provide a simple, transitional approach to governance.
+The Shelley governance design was intended to provide a simple, transitional approach to governance.
 This proposal aims to address a number of shortcomings with that design
 that are apparent as we move into Voltaire.
 
 1. The Shelley governance design gives no room for active on-chain participation of Ada holders.
 While changes to the protocol are usually the results of discussions with selected community actors,
-the process is driven mainly by the founding entities.
+the process is currently driven mainly by the founding entities.
 Ensuring that everyone can voice their concern is cumbersome, and can be perceived as arbitrary at times.
 
 2. Movements from the treasury constitute a critical and sensitive topic.
@@ -174,7 +174,7 @@ It makes sense to leverage the Cardano blockchain to record the shared Cardano e
 
 ### Out of scope
 
-The following topics are considered to be out of the scope of this proposal.
+The following topics are considered to be out of the scope of this CIP.
 
 #### The contents of the constitution
 
@@ -246,10 +246,10 @@ We define a _constitutional committee_ which represents a set of individuals or 
 (each associated with a pair of Ed25519 credentials) that are collectively responsible for **ensuring that the Constitution is respected**.
 
 Though it **cannot be enforced on-chain**, the constitutional committee is **only** supposed to vote
-on the constitutionality of governance actions and should be replaced
+on the constitutionality of governance actions (which should thus ensure the long-term sustainability of the blockchain) and should be replaced
 (via the **no confidence** action) if they overstep this boundary.
 Said differently, there is a social contract between the constitutional committee and the actors of the network.
-Although the constitutional committee could reject certain governance actions (by voting 'no' on them),
+Although the constitutional committee could reject certain governance actions (by voting 'No' on them),
 they should only do so when those governance actions are in conflict with the Constitution.
 
 For example, if we consider the hypothetical Constitution rule "The Cardano network must always be able to produce new blocks",
@@ -270,6 +270,8 @@ and must be replaced before any governance actions can be ratified (see below).
 Any outstanding governance actions are dropped immediately after the protocol enters a state of no-confidence,
 and will not be enacted.
 
+#### Constitutional committee keys
+
 The constitutional committee will use a hot and cold key setup, similar to the existing "genesis delegation certificate" mechanism.
 
 #### Initial constitutional committee
@@ -281,31 +283,35 @@ The initial committee is not yet defined. In all likelihood, it will include som
 The constitutional committee can be replaced in one of two ways:
 
 * When in a **normal** state (i.e. a state of **confidence**), the committee can be replaced via a
-specific governance action (action 2 below) that requires the approval of both the **current constitutional committee** and the **DReps**.
+specific governance action ("New constitional committee", described below) that requires the approval of both the **current constitutional committee** and the **DReps**.
 
 * When in a state of **no-confidence**, the committee can also be replaced via the same governance action (action 2 below),
 but this instead requires the approval of both the **SPOs** and the **DReps**.
 
+The new constitutional committee could, in principle, be identical to or partially overlap the outgoing committee as long as the action is properly ratified.
+This might happen, for example, if the electorate has collective confidence in all or part of the committee and wishes to extend its term of office.
+
+
 #### Size of the constitutional committee
 
-Unlike the Shelley governance design, the size of the constitutional committee is not fixed.
-It may be changed whenever a new committee is elected (action 2 below).
+Unlike the Shelley governance design, the size of the constitutional committee is not fixed and can be any nonnegative number.
+It may be changed whenever a new committee is elected ("New constitutional committee and/or quorum size").
 Likewise, the committee _quorum_ (the number of committee `Yes` votes that are required to ratify governance actions) is not fixed and
-can also be varied by governance action 2.
+can also be varied by the governance action.
 This gives a great deal of flexibility to the composition of the committee.
 
 #### Term limits
 
-
+Each newly elected constitutional committee will have a term limit.
 The system will automatically enter a state of no-confidence when the term limit for the constitutional
 committee expires.  This limit is a governance protocol parameter, which specifies the maximum number of epochs
 during which the committee can ratify governance actions.  When the committee term limit expires, all governance
-actions will be dropped, and a new committee must be elected.
+actions will be **dropped**, and a new committee must be elected.
 
-The term limit will reset whenever governance action 2 is enacted, even if the same committee is re-elected
+The term limit will reset whenever the  "New constitutional committee and/or quorum size" governance action is enacted, even if the same committee is re-elected
 and the quorum remains unchanged.  This allows Ada holders to confirm their confidence in the committee if they wish.
 Note that the term limit is calculated at the point the committee is elected.  Any change in the underlying protocol
-parameter only affects the term that applies to future committees.
+parameter only affects the term that applies to future committees, and does not change the term of the current committee.
 
 
 <!--------------------------- Constitutional committee ------------------------>
@@ -336,14 +342,14 @@ that will vote on their behalf.  In addition, two pre-defined DRep options are a
 * `No Confidence`
 
   If an Ada holder delegates to `No Confidence`, then their stake is counted as
-  a **no** vote on every governance action apart from a motion of no confidence (action 1).
+  a **no** vote on every governance action apart from a "Motion of no confidence".
   This also signals that they have no confidence in the existing constitutional committee.
 
   The effect of delegating to `No Confidence` on chain is that this stake *will* be considered to be
   a part of the active voting stake. It will count as a `Yes` vote on every `No Confidence`
   action and a `No` vote on every other action.
-  It also serves as a directly auditable measure of the confidence of the constitutional
-  committee at all times.
+  It also serves as a directly auditable measure of the confidence of Ada holders in the constitutional
+  committee.
 
 
 > **Note**
@@ -352,8 +358,9 @@ that will vote on their behalf.  In addition, two pre-defined DRep options are a
 
 #### Registered DReps
 
-In Voltaire, existing stake credentials will also be
-able to delegate their stake to registered DReps.
+In Voltaire, existing stake credentials will be
+able to delegate their stake to registered DReps for voting purposes, in addition to the current delegation to stake pools
+for block production.
 DRep delegation will mimic the existing stake delegation mechanisms (via on-chain certificates).
 Similarly, DRep registration will mimic the existing stake registration mechanisms.
 
@@ -365,6 +372,8 @@ Registered DReps are identified by a credential that can be either:
 The blake2b-224 hash digest of a serialized DRep credential is called the _DRep ID_.
 
 The following new types of certificates will be added for governance:
+DRep registration certificates, DRep retirement certificates, and
+vote delegation certificates.
 
 ##### DRep registration certificates
 
@@ -376,7 +385,7 @@ DRep registration certificates include:
 An **anchor** is a pair of:
 
 * a URL to a JSON payload of metadata
-* a hash of the contents of this metadata URL
+* a hash of the contents of the metadata URL
 
 The structure and format of this metadata is deliberately left open in this CIP.
 The on-chain rules will not check either the URL or the hash.
@@ -390,12 +399,15 @@ DRep retirement certificates include:
 * a DRep ID
 * the epoch number after which the DRep will retire
 
+
 ##### Vote delegation certificates
 
 Vote delegation certificates include:
 
 * the DRep ID to which the stake should be delegated
 * the stake credential for the delegator
+
+##### Certificate authorization schemes
 
 The authorization scheme (i.e. which signatures are required for registration, retirement or delegation) mimics the existing stake delegation certificate authorization scheme.
 
@@ -414,14 +426,17 @@ distribution. This distribution will determine how much stake is backed by each
 > **Unlike** the distribution that is used for block production, we will always use the most
 > current version of the per-DRep stake distribution as given on the epoch boundary.
 >
-> This means that **for any topic which individual voters cares deeply about,
+> This means that **for any topic which individual voters care deeply about,
 > they have time to register themselves as a DRep and vote directly**.
 > However, it means that there may be a difference between the stake that is used for block
 > production and the stake that is used for voting in any given epoch.
 
+
 #### Incentives for Ada holders to delegate voting stake
 
-After the [bootstrapping phase](#bootstrapping-phase), reward accounts will be
+There will be a short [bootstrapping phase](#bootstrapping-phase) during which rewards will be earned
+for stake delegation etc. and may be withdrawn at any time.
+After this phase, although rewards will continue to be earned for block delegation etc., reward accounts will be
 **blocked from withdrawing any rewards** unless their associated stake credential is also delegated to a DRep
 (either pre-defined or registered).  This helps to ensure high participation, and so, legitimacy.
 
@@ -434,8 +449,8 @@ Our interim proposal is therefore to escrow Lovelace from the existing Cardano t
 extremely important decision can be agreed on by the community, through the on-chain governance
 mechanism that is being constructed.
 
-Alternatively, DReps could pay themselves through instances of the treasury withdrawal action (action 6) that are described
-in this CIP. Such an action would be auditable on-chain, and should reflect an off-chain agreement between DReps and delegators.
+Alternatively, DReps could pay themselves through instances of the "Treasury withdrawal" governance action.
+Such an action would be auditable on-chain, and should reflect an off-chain agreement between DReps and delegators.
 
 <!---------------------------           DReps          ------------------------>
 <!---------------------------    Governance Actions    ------------------------>
@@ -531,6 +546,9 @@ The initial thresholds should be chosen by the Cardano community as a whole.
 > Moreover, the treasury threshold could also be adaptive, depending on the total Lovelace that is being withdrawn,
 > or different thresholds could be set for different levels of withdrawal.
 
+> **Note**
+> To achieve legitimacy, the minimum acceptable threshold should be no less than 50% of the delegated stake.
+
 
 ##### Restrictions
 
@@ -617,23 +635,21 @@ In addition, each action will include some elements that are specific to its typ
 Each accepted governance action will be assigned a unique identifier (a.k.a. the **governance action ID**),
 consisting of the transaction hash that created it and the index within the transaction body that points to it.
 
+> ** Note: There can be no duplicate committee members - each pair of credentials in a committee must be unique.
+
 #### Protocol Parameter groups
 
-We have grouped the protocol parameter changes.
+We have grouped the protocol parameter changes by type.
 This allows different thresholds to be set for each group, and also supports separate votes.
 DReps may choose to abstain to vote on parameter changes that are outside of their field of expertise.
 The _network_,  _economic_ and _technical_ parameter groups collect existing protocol parameters that were introduced during the Shelley, Alonzo and Babbage eras.
-In addition, we introduce a new _governance_ group that is specific to the new governance parameters that will be introduced by CIP-1694. 
+In addition, we introduce a new _governance_ group that is specific to the new governance parameters that will be introduced by CIP-1694.
 
 The **network group** consists of:
 * maximum block body size (`maxBBSize`)
 * maximum transaction size (`maxTxSize`)
 * maximum block header size (`maxBHSize`)
-* pool retirement maximum epoch (`eMax`)
-* desired number of pools (`nOpt`)
-* Plutus execution cost models (`costModels`)
 * maximum size of a serialized asset value (`maxValSize`)
-* maximum number of collateral inputs (`maxCollateralInputs`)
 * maximum script execution units in a single transaction (`maxTxExUnits`)
 * maximum script execution units in a single block (`maxBlockExUnits`)
 
@@ -647,12 +663,14 @@ The **economic group** consists of:
 * minimum fixed rewards cut for pools (`minPoolCost`)
 * minimum Lovelace deposit per byte of serialized UTxO (`coinsPerUTxOByte`)
 * prices of Plutus execution units (`prices`)
-* proportion of collateral needed for scripts (`collateralPercentage`)
-* pool pledge influence (`a0`)
 
 The **technical group** consists of:
-
-TODO: Some of the above actually belong here.
+* pool pledge influence (`a0`)
+* pool retirement maximum epoch (`eMax`)
+* desired number of pools (`nOpt`)
+* Plutus execution cost models (`costModels`)
+* maximum number of collateral inputs (`maxCollateralInputs`)
+* proportion of collateral needed for scripts (`collateralPercentage`)
 
 The **governance group** consists of all the new protocol parameters that are introduced in this CIP:
 * governance voting thresholds ($P_1$, $P_{2a}$, $P_{2b}$, $P_3$, $P_4$, $P_{5a}$, $P_{5b}$, $P_{5c}$, $P_6$, $P_7$, $Q_1$, $Q_{2b}$, $Q_4$)
@@ -680,16 +698,16 @@ Each vote transaction consists of the following:
 * a role - constitutional committee member, DRep, or SPO
 * a governance credential witness for the role
 * an anchor (as defined above) for information that is relevant to the vote
-* a yes/no/abstain vote
+* a 'Yes'/'No'/'Abstain' vote
 
-For SPOs and DReps, the number of votes that are cast (whether 'yes', 'no' or 'abstain') is proportional to the Lovelace that is delegated to them at the point the
+For SPOs and DReps, the number of votes that are cast (whether 'Yes', 'No' or 'Abstain') is proportional to the Lovelace that is delegated to them at the point the
 action is checked for ratification.  For constitututional committee members, each member has one vote.
 
-> **Warning** 'abstain' votes are not included in the "active voting stake".
+> **Warning** 'Abstain' votes are not included in the "active voting stake".
 >
 > Note that an explicit vote to abstain differs from abstaining from voting
 > (the former is visible on chain, the latter is not).
-> To avoid confusion, we will only use the word 'abstain' from this point onward to mean an on-chain vote to abstain.
+> To avoid confusion, we will only use the word 'Abstain' from this point onward to mean an on-chain vote to abstain.
 
 The governance credential witness will trigger the appropriate verifications in the ledger according to the existing `UTxOW` ledger rule.
 (i.e. a signature check for verification keys, and a validator execution with a specific vote redeemer and new Plutus purpose for scripts).
@@ -698,7 +716,7 @@ Votes can be cast multiple times for each governance action by a single credenti
 Correctly submitted votes override any older votes for the same credential and role.
 That is, the voter may change their position on any action if they choose.
 As soon as a governance action is ratified, voting ends.
-No further votes are considered or recorded (whether they are 'yes', 'no' or 'abstain').
+No further votes are considered or recorded (whether they are 'Yes', 'No' or 'Abstain').
 
 #### Governance state
 
@@ -732,7 +750,7 @@ We define a number of new terms related to voting stake:
   * It contains a registered stake credential.
   * The registered stake credential has delegated its voting rights to a registered DRep.
 * Relative to some percentage `P`, a DRep (SPO) **vote threshold has been met** if the sum of the relative stake that has been delegated to the DReps (SPOs)
-  that vote 'yes' to a governance action minus the sum of the relative stake that has been delegated to the DReps (SPOs) that vote 'no' to the governance action
+  that vote 'Yes' to a governance action minus the sum of the relative stake that has been delegated to the DReps (SPOs) that vote 'No' to the governance action
   is at least `P`.
 
 > **Note**
@@ -790,7 +808,7 @@ However, enforcing identity verification is very difficult without some centrali
 
 ### Reducing the power of entities with large amounts of Ada
 
-Mechanisms, such as quadratic voting, exist to guard against entities with a large amount of influence.
+Various mechanisms, such as quadratic voting, have been proposed to guard against entities with a large amount of influence.
 In a system based on "1 Lovelace, 1 vote", however, it is trivially easy to split stake into small amounts and undo the protections.
 Without an on-chain identity verification system we cannot adopt any such measures.
 
@@ -833,7 +851,7 @@ also a good block producer, and SPOs can choose to represent Ada holders or not.
 The requirements in the [ratification requirement table](#requirements) are explained here.
 Most of the governance actions have the same kind of requirements:
 the constitutional committee must reach quorum and the DReps must reach a sufficient number of
-'yes' votes.
+'Yes' votes.
 This includes these actions:
 * New committee/quorum (normal state)
 * Update to the Constitution
@@ -842,9 +860,9 @@ This includes these actions:
 
 ### Motion of no-confidence
 
-A motion of no-confidence represents the lack of confidence by the Cardano community in the
-current constitutional committee, and hence the constitutional committee should have no
-say whatsoever in this governance action.
+A motion of no-confidence represents a lack of confidence by the Cardano community in the
+current constitutional committee, and hence the constitutional committee should not
+be included in this type of governance action.
 In this situation, the SPOs and the DReps are left to represent the will of the community.
 
 ### New committee/quorum (state of no-confidence)
@@ -855,16 +873,15 @@ depends on both the SPOs and the DReps to represent the will of the community.
 ### The versatility of the info governance action
 
 While not binding on chain, the Info governance action could be useful in an number of
-situations:
+situations.  These include:
 
 * ratifying a CIP
 * deciding on the genesis file for a new ledger era
-* initial feedback for future proposals
+* recording initial feedback for future governance actions
 
 ### Hard-Fork initiation
 
-Regardless of any governance mechanism, SPO participation is needed for any hard fork since it is
-they who must upgrade their software.
+Regardless of any governance mechanism, SPO participation is needed for any hard fork since they must upgrade their node software.
 For this reason, we make their cooperation explicit in the hard fork initiation governance action,
 by always requiring their vote.
 The constitutional committee also votes, signaling the constitutionality of a hard fork.
@@ -876,16 +893,16 @@ Both the governance actions and the votes use new metadata fields,
 in the form of URLs and integrity hashes
 (mirroring the metadata structure for stake pool registration).
 The metadata is used to provide context.
-For example, votes by the constitutional committee need an explanation as to why it is in line with
+For example, votes by the constitutional committee need an explanation as to why they are in line with
 the constitution.
 Governance actions need to explain why the action is needed,
 what experts were consulted, etc.
-We do not want transaction size constraints to limit this explanatory data,
-so we use URLs.
+Since transaction size constraints should not limit this explanatory data,
+we use URLs instead.
 
 This does, however, introduce new problems.
 If a URL does not resolve, what should be the expectation for voting on that action?
-Should we expect everyone to vote 'abstain'?.
+Should we expect everyone to vote 'Abstain'?.
 Is this an attack vector against the governance system?
 In such a scenario, the hash pre-image could be communicated in other ways, but we should be
 prepared for the situation.
@@ -896,10 +913,10 @@ Should there be a summary of the justification on chain?
 Instead of specific dedicated fields in the transaction format, we could instead use the existing transaction metadata field.
 
 Governance-related metadata can be clearly identified by registering a CIP-10 metadata label.
-Within that, the structure of the metadata can be determined by this CIP (exact format TBD), using an index to map the vote or proposal id to the corresponding metadata URL and hash.
+Within that, the structure of the metadata can be determined by this CIP (exact format TBD), using an index to map the vote or governance action ID to the corresponding metadata URL and hash.
 
 This avoids the need to add additional fields to the transaction body, at the risk of making it easier for submitters to ignore.
-However, since the required metadata can be empty (or point to a non-resolving URL),
+However, since the required metadata can be empty (or can point to a non-resolving URL),
 it is already easy for submitters to not provide metadata, and so it is unclear whether this makes the situation worse.
 
 Note that transaction metadata is never stored in the ledger state, so it would be up to clients
@@ -915,29 +932,29 @@ for some people to submit an action.
 Note, however, that crowd-sourcing with a Plutus script is always an option to gather the deposit.
 
 We could, alternatively, accept the possibility of a large number of actions active at any given
-time, and instead depend on off-chain socialization to guide voters attention to those that merit it.
+time, and instead depend on off-chain socialization to guide voters' attention to those that merit it.
 In this scenario, the constitutional committee might choose to only consider proposals which have
 already garnered enough votes from the DReps.
 
 ### No AVST
 
 An earlier draft of this CIP included the notion of an "active voting stake threshold", or AVST.
-The purpose was to ensure the legitimacy of each vote, removing the possibility that, for example,
+The purpose of AVST was to ensure the legitimacy of each vote, removing the possibility that, for example,
 9 out of 10 Lovelace could decide the fate of millions of entities on Cardano.
 There are really two concerns here, which are worth separating.
 
 The first concern is that of bootstrapping the system, i.e. reaching the initial moment when
-a sufficient amount of stake is registered to vote.
-The second concerns is that the system could lose participation over time.
+sufficient stake is registered to vote.
+The second concern is that the system could lose participation over time.
 One problem with the AVST is that it gives an incentive for SPOs to desire a low voting registration
-(since then their votes hold more weight).
+(since their votes then hold more weight).
 This is absolutely not a slight on the existing SPOs, but an issue with bad incentives.
 
 We have chosen, therefore, to solve the two concerns differently.
 We solve the bootstrapping problem as described in the section on bootstrapping.
-And we solve the long-term participation problem by not allowing reward withdrawals
+We solve the long-term participation problem by not allowing reward withdrawals
 (after the bootstrap phase) unless the stake is delegated to a DRep
-(including the two special cases, namely 'abstain' and 'no confidence').
+(including the two special cases, namely 'Abstain' and 'No confidence').
 
 ## Path to Active
 
@@ -952,19 +969,19 @@ The features in this CIP require a hard fork.
 This document describes an ambitious change to Cardano governance.
 We propose to implement the changes via **one hard fork**.
 
-In the follwowing sections, we give more details about the various implementation work items that have already been identified.
+In the following sections, we give more details about the various implementation work items that have already been identified.
 In addition, the final section exposes a few open questions which will need to be finalized.
 We hope that those questions can be addressed through community workshops and discussions.
 
 #### Ratification of this proposal
 
-The ratification of this proposal is something of a circular problem: we need some governance framework in order to agree on what the final governance framework should be.
+The ratification of this proposal is something of a circular problem: we need some form of governance framework in order to agree on what the final governance framework should be.
 As has been stated many times, CIPs are not authoritative, nor are they a governance mechanism.
 Rather, they describe technical solutions that have been deemed sound (from a technical standpoint) by community of experts.
 
 CIP-1694 arguably goes beyond the usual scope of the CIP process and there is a strong desire to ratify this CIP through _some process_.
 However, that process is yet to be defined and it remains an open question.
-The final process is likely to be a blend of various ideas, such as:
+The final ratification process is likely to be a blend of various ideas, such as:
 
 - [ ] Gather opinions from community-held workshops, akin to the Colorado workshop of February-March 2023.
 - [ ] Exercise voting actions on a public testnet, with sufficient participation.
@@ -977,17 +994,18 @@ The final process is likely to be a blend of various ideas, such as:
 
   The governance actions and votes will comprise two new transaction body fields.
 
-- [ ] Two new kinds of certificates will be added in addition to the existing ones:
+- [ ] Three new kinds of certificates will be added in addition to the existing ones:
 
   * DRep registration
   * DRep de-registration
+  * Vote delegation
 
   And similarly, the current MIR and genesis certificates will be removed.
 
 - [ ] A new `Voting` purpose will be added to Plutus script contexts.
   This will provide, in particular, the vote to on-chain scripts.
 
-> **Warning** We will provide a CDDL specification for each of those changes. As usual.
+> **Warning** As usual, we will provide a CDDL specification for each of those changes.
 
 #### Changes to the existing ledger rules
 
@@ -997,7 +1015,7 @@ The final process is likely to be a blend of various ideas, such as:
 
 * The `NEWEPOCH` transition rule will be modified.
 * The `MIR` sub-rule will be removed.
-* A new `RATIFY` rule to stage governance action for enactment.
+* A new `RATIFY` rule will be introduced to stage governance actions for enactment.
 * A new `ENACTMENT` rule will be called immediately after the `EPOCH` rule. This rule will enact governance actions that have previously been ratified.
 * The `EPOCH` rule will no longer call the `NEWPP` sub-rule or compute whether the quorum is met on the PPUP state.
 
