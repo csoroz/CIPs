@@ -213,7 +213,7 @@ How any private companies, public or private institutions,  individuals etc. cho
   - [Pre-defined DReps](#pre-defined-dreps)
   - [Registered DReps](#registered-dreps)
   - [New stake distribution for DReps](#new-stake-distribution-for-dreps)
-  - [Incentives to delegate voting stake](#incentives-to-delegate-voting-stake)
+  - [Incentives for Ada holders to delegate voting stake](#incentives-for-ada-holders-to-delegate-voting-stake)
   - [DReps incentives](#dreps-incentives)
 + [Governance actions](#governance-actions)
   - [Ratification](#ratification)
@@ -337,7 +337,7 @@ that will vote on their behalf.  In addition, two pre-defined DRep options are a
 
   The effect of delegating to `Abstain` on chain is that the delegated stake *will not* be considered to be
   a part of the active voting stake.  However, the stake *will* be considered to be registered for the
-  purpose of the incentives that are described in [Incentives to delegate voting stake](#incentives-to-delegate-voting-stake).
+  purpose of the incentives that are described in [Incentives for Ada holders to delegate voting stake](#incentives-for-ada-holders-to-delegate-voting-stake).
 
 * `No Confidence`
 
