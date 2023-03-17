@@ -93,7 +93,7 @@ to this CIP, and for their active championing of Cardano's vision for minimal vi
 * Marek Mahut, 5 Binaries
 * Markus Gufler
 * Matthew Capps
-* Mercy, Wanda
+* Mercy, Wada
 * Michael Dogali
 * Michael Madoff
 * Patrick Tobler, NMKR
@@ -273,10 +273,6 @@ and will not be enacted.
 #### Constitutional committee keys
 
 The constitutional committee will use a hot and cold key setup, similar to the existing "genesis delegation certificate" mechanism.
-
-#### Initial constitutional committee
-
-The initial committee is not yet defined. In all likelihood, it will include some of Cardano's founding entities.
 
 #### Replacing the constitutional committee
 
@@ -556,7 +552,7 @@ The initial thresholds should be chosen by the Cardano community as a whole.
 ##### Restrictions
 
 Apart from _Treasury withdrawals_ and _Infos_, we include a mechanism for ensuring that governance
-actions of the same type do not accidentally clash with eath other in an unexpected way.
+actions of the same type do not accidentally clash with each other in an unexpected way.
 
 Each governance action must include the governance action ID for the most recently enacted action of its given type.
 This means that two actions of the same type can be enacted at the same time,
@@ -657,9 +653,11 @@ consisting of the transaction hash that created it and the index within the tran
 
 #### Protocol Parameter groups
 
-We have grouped the protocol parameter changes by type.
-This allows different thresholds to be set for each group, and also supports separate votes.
-DReps may choose to abstain to vote on parameter changes that are outside of their field of expertise.
+We have grouped the protocol parameter changes by type,
+allowing different thresholds to be set for each group.
+We are not, however, restricting each protocol parameter governance action to be contained within one group.
+The maximum threshold of all the groups involved will apply to any given such governance action.
+
 The _network_,  _economic_ and _technical_ parameter groups collect existing protocol parameters that were introduced during the Shelley, Alonzo and Babbage eras.
 In addition, we introduce a new _governance_ group that is specific to the new governance parameters that will be introduced by CIP-1694.
 
